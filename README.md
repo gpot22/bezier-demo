@@ -1,5 +1,6 @@
 # bezier-demo
-`*WORK IN PROGRESS*`
+`*WORK IN PROGRESS*` \
+Inspired by: [The Beauty of Bézier Curves by Freya Holmér](https://www.youtube.com/watch?v=aVwxzDHniEw)
 
 ## Project Description
 An interactive demo of how Bezier curves work
