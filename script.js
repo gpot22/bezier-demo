@@ -25,6 +25,24 @@ let draggingPoint;
 
 // let curve_points = []
 
+function init() {
+    window.addEventListener('resize', resizeCanvas, false);
+    resizeCanvas();
+}
+  
+function redraw() {
+    ctx.strokeStyle = 'black';
+    ctx.lineWidth = '1';
+    ctx.strokeRect(0, 0, CANVAS_W, CANVAS_H);
+}
+
+function resizeCanvas() {
+    cursor.canvasRect = canvas.getBoundingClientRect()
+    canvas.width = CANVAS_W;
+    canvas.height = CANVAS_H;
+    redraw();
+}
+
 function drawCurve(start, end, points, dotted=true) {
     if(dotted) {
         points.forEach( (p) => {
@@ -111,7 +129,7 @@ addEventListener('mouseup', (_) => {
     draggingPoint.update(ctx)
     draggingPoint = null
 })
-
+init()
 animate()
 
 drawBtn.addEventListener('click', () => {
