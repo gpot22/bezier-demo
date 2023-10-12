@@ -7,8 +7,22 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <canvas id="canvas1"></canvas>
-    <button id="draw-btn">Draw Curve</button>
+    <div class="content">
+        <canvas id="canvas1"></canvas>
+        <div class="title">
+            <label for="options">The</label>
+            <select name="options" id="options">
+                <option value="linear">Linear</option>
+                <option value="quadratic">Quadratic</option>
+                <option value="cubic">Cubic</option>
+            </select>
+            
+            <label for="options">Bezier Curve</label>
+        </div>
+        
+    </div>
+    <!-- <button id="draw-btn">Draw Curve</button> -->
     <script src="script.js" type="module"></script>
+    <script src="custom-select.js" type="module"></script>
 </body>
 </html>

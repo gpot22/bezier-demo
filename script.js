@@ -5,8 +5,8 @@ const canvas = document.querySelector('#canvas1')
 const ctx = canvas.getContext('2d')
 const drawBtn = document.querySelector('#draw-btn')
 
-const CANVAS_W = canvas.width = 480
-const CANVAS_H = canvas.height = 480
+const CANVAS_W = canvas.width = 500
+const CANVAS_H = canvas.height = 400
 const cursor = new CursorHandler(canvas);
 
 // End Points
@@ -93,7 +93,7 @@ function quadraticBezier(start, control, end, dt) {
 
 function animate() {
     ctx.clearRect(0, 0, CANVAS_W, CANVAS_H)
-    let curve_points = cubicBezier(p0, [pA, pB], p1, 0.1)
+    let curve_points = cubicBezier(p0, [pA, pB], p1, 0.05)
     // let curve_points = quadraticBezier(p0, pA, o1, 0.1)
     curve_points.forEach(p => p.update(ctx))
 
@@ -132,5 +132,5 @@ addEventListener('mouseup', (_) => {
 init()
 animate()
 
-drawBtn.addEventListener('click', () => {
-    })
+// drawBtn.addEventListener('click', () => {
+//     })
