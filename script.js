@@ -43,64 +43,89 @@ function resizeCanvas() {
     redraw();
 }
 
-function drawCurve(start, end, points, dotted=true) {
-    if(dotted) {
-        points.forEach( (p) => {
-            p.update(ctx)
-        })
-    } else {
-        ctx.beginPath()
-        ctx.moveTo(start.x, start.y)
-        ctx.strokeStyle = 'black'
-        points.forEach( (p) => {
-            ctx.lineTo(p.x, p.y)
-            ctx.stroke()
-        })
+class BezierCurve {
+    constructor(p0, p1, controls, dt) {
+        this.p0 = p0
+        this.p1 = p1
+        this.controls = controls
+        this.dt = dt
+        this.curvePts = []
+        this.ptSize = 2
+        this.ptColor = 'black'
+    }
+
+    lerp (a0, a1, t) {
+        return a0 + (a1-a0)*t
+    }
+    
+    draw(ctx) {
+        p0.update(ctx)
+        p1.update(ctx)
+        this.controls.forEach(p => p.update(ctx))
+        this.curvePts.forEach(p => p.update(ctx))
     }
 }
 
-function cubicBezier(start, controls, end, dt) {
-    let points = []
-    for(let t=0; t<=1;t+=dt) {
-        let qp1 = quadraticBezierPoints(start, controls[0], controls[1], t)
-        let qp2 = quadraticBezierPoints(controls[0], controls[1], end, t)
-        let x = lerp(qp1.x, qp2.x, t)
-        let y = lerp(qp1.y, qp2.y, t)
-        points.push(new Point(x, y, 2, 'black'))
+class QuadraticBezier extends BezierCurve {
+    constructor(p0, p1, controls, dt) {
+        super(p0, p1, controls, dt)
+        this.calculateCurvePoints()
     }
-    return points
-}
 
-function quadraticBezierPoints(start, control, end, t) {
-    let x1 = lerp(start.x, control.x, t)
-    let y1 = lerp(start.y, control.y, t)
-    let x2 = lerp(control.x, end.x, t)
-    let y2 = lerp(control.y, end.y, t)
-
-    let x = lerp(x1, x2, t)
-    let y = lerp(y1, y2, t)
-    return {x:x, y:y}
-}
-
-function quadraticBezier(start, control, end, dt) {
-    let points = []
-    for(let t=0;t <= 1; t+=dt) {
-        let p = quadraticBezierPoints(start, control, end, t)
-        points.push(new Point(p.x, p.y, 2, 'black'))
+    _calculatePoint(t) {
+        let ctrl1 = this.controls[0]
+        let x1 = lerp(this.p0.x, ctrl1.x, t)
+        let y1 = lerp(this.p0.y, ctrl1.y, t)
+        let x2 = lerp(ctrl1.x, this.p1.x, t)
+        let y2 = lerp(ctrl1.y, this.p1.y, t)
+    
+        let x = lerp(x1, x2, t)
+        let y = lerp(y1, y2, t)
+        return {x:x, y:y}
     }
-    return points
+
+    calculateCurvePoints() {
+        this.curvePts = []
+        for(let t=0;t <= 1; t+=this.dt) {
+            let p = this._calculatePoint(t)
+            this.curvePts.push(new Point(p.x, p.y, this.ptSize, this.ptColor))
+        }
+    }
+
 }
+// WIP
+// class CubicBezier extends QuadraticBezier {
+//     constructor(p0, p1, controls, dt) {
+//         super(p0, p1, controls, dt)
+//     }
+
+//     calculateCurvePoints() {
+//         this.curvePts = []
+//         for(let t=0;t<=1;t+=this.dt) {
+//             let qp1 = super.calculateCurvePoints(start, controls[0], controls[1], t)
+//             let qp2 = super.calculateCurvePoints(controls[0], controls[1], end, t)
+//             let x = lerp(qp1.x, qp2.x, t)
+//             let y = lerp(qp1.y, qp2.y, t)
+//             points.push(new Point(x, y, 2, 'black'))
+//         }
+//     }
+// }
+
+// function cubicBezier(start, controls, end, dt) {
+//     let points = []
+//     for(let t=0; t<=1;t+=dt) {
+//         let qp1 = quadraticBezierPoints(start, controls[0], controls[1], t)
+//         let qp2 = quadraticBezierPoints(controls[0], controls[1], end, t)
+//         let x = lerp(qp1.x, qp2.x, t)
+//         let y = lerp(qp1.y, qp2.y, t)
+//         points.push(new Point(x, y, 2, 'black'))
+//     }
+//     return points
+// }
 
 function animate() {
     ctx.clearRect(0, 0, CANVAS_W, CANVAS_H)
-    let curve_points = cubicBezier(p0, [pA, pB], p1, 0.05)
-    // let curve_points = quadraticBezier(p0, pA, o1, 0.1)
-    curve_points.forEach(p => p.update(ctx))
-
-    p0.update(ctx)
-    p1.update(ctx)
-    pA.update(ctx)
-    pB.update(ctx)
+    qb.draw(ctx)
     requestAnimationFrame(animate)
 }
 
@@ -118,8 +143,8 @@ addEventListener('mousemove', (_) => {
     if(draggingPoint == null) return;
     draggingPoint.x = Math.min(Math.max(cursor.x, draggingPoint.r), CANVAS_W-draggingPoint.r)
     draggingPoint.y = Math.min(Math.max(cursor.y, draggingPoint.r), CANVAS_H-draggingPoint.r)
-    
     draggingPoint.update(ctx)
+    qb.calculateCurvePoints()
 })
 
 
@@ -129,7 +154,10 @@ addEventListener('mouseup', (_) => {
     draggingPoint.update(ctx)
     draggingPoint = null
 })
+
+
 init()
+let qb = new QuadraticBezier(p0, p1, [pA], 0.1)
 animate()
 
 // drawBtn.addEventListener('click', () => {
