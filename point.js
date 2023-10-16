@@ -22,8 +22,9 @@ export default class Point {
 }
 
 export class DynamicPoint extends Point {
-    constructor(_x, _y, _r=5, _color='black') {
+    constructor(_x, _y, _r=5, _color='black', _parentCurve=null) {
         super(_x, _y, _r, _color)
+        this.parentCurve = _parentCurve
     }
 
     setRGBA(r, g, b, a) {
@@ -32,5 +33,8 @@ export class DynamicPoint extends Point {
     
     isTouching(x, y, padding=0) {
         return dist(this.x, this.y, x, y) < this.r + padding
+    }
+    clone() {
+        return new DynamicPoint(this.x, this.y, this.r, this.color)
     }
 }
