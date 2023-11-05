@@ -6,6 +6,7 @@ export default class CursorHandler {
         this.y;
         this.pressed = false;
         addEventListener('mousedown', (e) => {
+            if(e.button != 0) return;
             this.pressed = true
             
         })
@@ -14,6 +15,7 @@ export default class CursorHandler {
             this.y = e.clientY - this.canvasRect.top;
         })
         addEventListener('mouseup', (e) => {
+            if(e.button != 0) return;
             this.pressed = false
         })
     }

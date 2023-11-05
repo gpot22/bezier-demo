@@ -35,6 +35,17 @@ export class DynamicPoint extends Point {
         return dist(this.x, this.y, x, y) < this.r + padding
     }
     clone() {
-        return new DynamicPoint(this.x, this.y, this.r, this.color)
+        return new DynamicPoint(this.x, this.y, this.r, this.color, this.parentCurve)
+    }
+}
+
+export class AnimatedPoint extends DynamicPoint {
+    constructor(_x, _y, _r=5, _color='black', _parentCurve=null, _vel) {
+        super(_x, _y, _r, _color, _parentCurve, _vel)
+        this.vel = _vel
+    }
+
+    clone() {
+        return new AnimatedPoint(this.x, this.y, this.r, this.color, this.parentCurve, this.vel)
     }
 }

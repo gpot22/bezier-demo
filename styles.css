@@ -12,8 +12,8 @@ html, body {
     position: absolute;
     top: 50vh;
     left: 50%;
-    width: 500px;
-    height: 400px;
+    /* width: 500px;
+    height: 400px; */
     transform: translate(-50%, -50%)
 }
 
@@ -50,12 +50,14 @@ html, body {
     background: white;
 }
 
-
-#draw-btn {
+.controls {
     position: absolute;
     left: 50%;
-    bottom: 10px;
+    top: 90vh;
     transform: translateX(-50%);
+    z-index: 10;
+}
 
-    z-index: 10
+.controls .play-btn {
+    border-radius: 50%;
 }
