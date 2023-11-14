@@ -13,6 +13,11 @@ export default class Point {
         return new Point(this.x, this.y, this.r, this.color)
     }
 
+    // drawCoordinates(ctx) {
+    //     ctx.font = "18px Calibri"
+    //     ctx.strokeText(`(${this.x}, ${this.y})`, this.x, this.y)
+    // }
+
     update (ctx) {
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.r, 0, Math.PI*2, false);
@@ -27,6 +32,8 @@ export class DynamicPoint extends Point {
         this.parentCurve = _parentCurve
     }
 
+    static showCoordinates = false
+
     setRGBA(r, g, b, a) {
         this.color = `rgba(${r},${g},${b},${a})`
     }
@@ -34,6 +41,16 @@ export class DynamicPoint extends Point {
     isTouching(x, y, padding=0) {
         return dist(this.x, this.y, x, y) < this.r + padding
     }
+
+    update(ctx) {
+        super.update(ctx)
+        if(DynamicPoint.showCoordinates) {
+           ctx.font = "18px Calibri"
+            ctx.fillStyle = "black"
+            ctx.fillText(`(${Math.round(this.x)}, ${Math.round(this.y)})`, this.x, this.y)
+        }
+    }
+
     clone() {
         return new DynamicPoint(this.x, this.y, this.r, this.color, this.parentCurve)
     }

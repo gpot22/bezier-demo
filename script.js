@@ -1,5 +1,5 @@
 import Point, {DynamicPoint, AnimatedPoint} from "./point.js"
-import CursorHandler from './cursor_handler.js'
+import InputHandler from './input_handler.js'
 import { LinearBezier, QuadraticBezier, CubicBezier } from "./curves.js"
 
 const canvas = document.querySelector('#canvas1')
@@ -8,11 +8,13 @@ const ctx = canvas.getContext('2d')
 let canvasDim = _dimensionCanvas()
 canvas.width = canvasDim.width
 canvas.height = canvasDim.height
-const cursor = new CursorHandler(canvas);
+const input = new InputHandler(canvas);
 
 const controlsDiv = document.querySelector('.controls')
 const playBtn = controlsDiv.querySelector('.play-btn')
 const playBtnIcon = playBtn.querySelector('i')
+
+const toggleCoordinates = document.querySelector('#coordVisible')
 
 const selectCurve = document.getElementById('options')
 
@@ -28,7 +30,7 @@ let actor;
 let playing = false;
 // resize canvas
 function _resizeCanvas() {
-    cursor.canvasRect = canvas.getBoundingClientRect()
+    input.canvasRect = canvas.getBoundingClientRect()
     canvasDim = _dimensionCanvas()
     canvas.width = canvasDim.width
     canvas.height = canvasDim.height
@@ -70,6 +72,13 @@ function animate() {
     actor.x = p.x
     actor.y = p.y
     
+    input.releasedKeys.forEach(k => {
+        if(k == " ") {
+            togglePlay()
+        }
+
+        input.releasedKeys.splice(input.releasedKeys.indexOf(k), 1)
+    })
     requestAnimationFrame(animate)
 }
 
@@ -96,7 +105,7 @@ function init() {
                 break;
         }
         actor.parentCurve = demoCurve
-        demoCurve.init(canvas, ctx, cursor)
+        demoCurve.init(canvas, ctx, input)
         curves.pop().delete()
         curves.push(demoCurve)
         pause()
@@ -107,7 +116,7 @@ function init() {
     })
     selectCurve.value = 'linear'
     demoCurve = new LinearBezier(endA.clone(), endB.clone(), DT)
-    demoCurve.init(canvas, ctx, cursor)
+    demoCurve.init(canvas, ctx, input)
     curves.push(demoCurve)
     
     let actorVel = 3
@@ -117,10 +126,14 @@ function init() {
 
 function initControls() {
     playBtn.addEventListener('click', (e) => {
-        playBtnIcon.classList.toggle('fa-play-circle')
-        playBtnIcon.classList.toggle('fa-pause-circle')
-        playing = !playing
+        togglePlay()
     })
+}
+
+function togglePlay() {
+    playBtnIcon.classList.toggle('fa-play-circle')
+    playBtnIcon.classList.toggle('fa-pause-circle')
+    playing = !playing
 }
 
 function play() {
@@ -135,10 +148,17 @@ function pause() {
     playing = false
 }
 
+function initSettings() {
+    toggleCoordinates.addEventListener('change', _ => {
+        DynamicPoint.showCoordinates = !DynamicPoint.showCoordinates
+    })
+}
+
 
 
 
 initCanvas()
 initControls()
+initSettings()
 init()
 animate()

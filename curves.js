@@ -30,8 +30,10 @@ export default class BezierCurve {
 
         addEventListener('mousemove', (_) => {
             if(BezierCurve.draggingPoint == null) return;
-            BezierCurve.draggingPoint.x = Math.min(Math.max(cursor.x, BezierCurve.draggingPoint.r), canvas.width-BezierCurve.draggingPoint.r)
-            BezierCurve.draggingPoint.y = Math.min(Math.max(cursor.y, BezierCurve.draggingPoint.r), canvas.height-BezierCurve.draggingPoint.r)
+            BezierCurve.draggingPoint.x = Math.min(Math.max(cursor.x, 0), canvas.width)
+            BezierCurve.draggingPoint.y = Math.min(Math.max(cursor.y, 0), canvas.height)
+            // BezierCurve.draggingPoint.x = Math.min(Math.max(cursor.x, BezierCurve.draggingPoint.r), canvas.width-BezierCurve.draggingPoint.r)
+            // BezierCurve.draggingPoint.y = Math.min(Math.max(cursor.y, BezierCurve.draggingPoint.r), canvas.height-BezierCurve.draggingPoint.r)
             BezierCurve.draggingPoint.update(ctx)
             this.calculateCurvePoints()
         }, {signal: this.controller.signal})
